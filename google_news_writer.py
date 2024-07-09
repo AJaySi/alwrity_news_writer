@@ -26,22 +26,39 @@ def main():
                     padding-left: 1rem;
                     padding-right: 1rem;
                 }
-        </style>
-        """, unsafe_allow_html=True)
-    st.markdown(f"""
-      <style>
-      [class="st-emotion-cache-7ym5gk ef3psqc12"]{{
-            display: inline-block;
-            padding: 5px 20px;
-            background-color: #4681f4;
-            color: #FBFFFF;
-            width: 300px;
-            height: 35px;
+                        ::-webkit-scrollbar-track {
+        background: #e1ebf9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #90CAF9;
+            border-radius: 10px;
+            border: 3px solid #e1ebf9;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64B5F6;
+        }
+
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+        div.stButton > button:first-child {
+            background: #1565C0;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
             text-align: center;
             text-decoration: none;
+            display: inline-block;
             font-size: 16px;
-            border-radius: 8px;’
-      }}
+            margin: 10px 2px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
       </style>
     """
     , unsafe_allow_html=True)
@@ -57,19 +74,18 @@ def main():
     # Title and description
     st.title("✍️ Alwrity - AI News Report Generator(Beta)")
 
-
     with st.expander("**PRO-TIP** - Read the instructions below.", expanded=True):
         news_keywords = st.text_input("Enter News Headlines to search Google News on:", 
                                       placeholder="News item to get latest results on..")
         col1, col2, space = st.columns([5, 5, 0.5])
         with col1:
             # Radio Buttons for Origin Country
-            news_country = st.radio("Select origin country of the News event:",
+            news_country = st.radio("**Select origin country of the News event:**",
                          options=["Spain", "Vietnam", "Pakistan", "India", "Germany", "China"],
                          index=3)
         with col2:
             # Radio Buttons for News Language
-            news_language = st.radio("Select news article language to search for:",
+            news_language = st.radio("**Select news article language to search for:**",
                          options=["English", "Spanish", "Vietnamese", "Arabic", "Hindi", "German", "Chinese"],
                          index=0)
         
@@ -81,13 +97,13 @@ def main():
         with st.status("Assigning the News to Virtual Reporter..", expanded=True) as status:
             st.write(f"Reading News articles on {news_keywords} from {news_country}..")
             news_report = perform_serper_news_search(news_keywords, news_country, news_language, status)
-            print(news_report)
             # Clicking without providing data, really ?
             if news_report:
                 status.update(label="Found some News aritcles, Creating News report..")
                 final_report = write_news_google_search(news_keywords, news_country, news_language, news_report, status)
                 st.subheader(f'**🧕🔬👩 Verify: Alwrity can make mistakes. Your Final News Report on {news_keywords}!**')
                 st.write(final_report)
+                st.write("\n\n\n\n\n")
                 status.update(label="Done: Scroll Down. Please Verify, Alwrity can make mistakes!", state="complete", expanded=True)
             else:
                 st.write("💥**Failed to generate News Report. Please try again!**")
@@ -100,8 +116,8 @@ def write_news_google_search(news_keywords, news_country, news_language, search_
 
     prompt = f"""
         As an experienced {news_language} news journalist and senior editor.
-        I will provide you with my 'News keywords' and its 'Google News Results'.
-        Your Task is to write a detailed {news_language} News report, from the given Google Nearch Results.
+        I will provide you with my 'News keywords' and its 'Google News Results', as context.
+        Your Task is to write a detailed {news_language} News report, from the given Google News Results.
         Important, as a news report, its imperative that your content is factually correct and cited.
         
         Follow below guidelines:
@@ -109,11 +125,10 @@ def write_news_google_search(news_keywords, news_country, news_language, search_
         2). Always provide in-line citations and provide referance links.
         4). Always include the dates when then news was reported.
         6). Do not explain, describe your response.
-        7). Your blog should be highly formatted in markdown style and in {news_language} language.
-        8). Important: Please read the entire prompt before writing anything. Follow the prompt exactly as I instructed.
+        7). Your news report should be highly formatted in markdown style and in {news_language} language.
 
-        \n\nNews Keywords: "{news_keywords}"\n\n
-        Google News Result: "{search_results}"
+        \n\nNews Keywords: '''{news_keywords}'''\n\n
+        Google News Result: '''{search_results}'''
         """
     status.update(label="Writing News report from Google News search results.")
     try:
@@ -204,7 +219,7 @@ def generate_text_with_exception_handling(prompt):
             },
         ]
 
-        model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
+        model = genai.GenerativeModel(model_name="gemini-1.5-flash-latest",
                                       generation_config=generation_config,
                                       safety_settings=safety_settings)
 
