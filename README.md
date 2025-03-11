@@ -19,7 +19,11 @@ requests
 Clone the repository: git clone https://github.com/your-username/alwrity.git
 Install the required dependencies: pip install streamlit openai serper requests
 Set the SERPER_API_KEY environment variable with your Serper API key.
-Run the application: streamlit run alwrity.py
+Set the GOOGLE_API_KEY environment variable with your Gemini API key.
+Run the application: streamlit run google_news_writer.py
+
+[Follow this steps to install and run AI News Writer locally on Windows using PowerShell](https://github.com/AJaySi/AI-Writer/wiki/How-to-Install-and-Run-the-Open-Source-AI-News-Writer-Locally-on-Windows)
+
 
 ###Usage:
 Open the Alwrity application in your web browser.
